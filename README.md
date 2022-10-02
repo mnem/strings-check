@@ -1,5 +1,7 @@
 # strings-check
 
+[![Swift](https://github.com/mnem/strings-check/actions/workflows/swift.yml/badge.svg)](https://github.com/mnem/strings-check/actions/workflows/swift.yml)
+
 A simple command line utility to check if translation strings are missing, or if extra translations are present in a set of `.strings` files. A base file is passed which is treated as the canonical set of translations strings, and additional `.strings` files are passed to compare against this canonical version.
 
 An example may help explain this better. Consider that we have the following strings files:
