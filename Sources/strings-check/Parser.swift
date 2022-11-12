@@ -37,6 +37,6 @@ struct Parser {
     }
     
     private static let lineMatcher: NSRegularExpression = {
-        try! NSRegularExpression(pattern: #"^\s*?(?<key>".*").*=.*?(?<value>".*").*?$"#)
+        try! NSRegularExpression(pattern: #"^\s*?(?<key>".*").*=.*?(?<value>".*").*?$"#, options: [.dotMatchesLineSeparators])
     }()
 }
