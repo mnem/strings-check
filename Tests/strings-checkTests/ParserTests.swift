@@ -57,5 +57,9 @@ final class ParserTests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    
+    func testMultiLineKey() throws {
+        let input = "\"key\ntwo\" = \"value\";"
+        let result = Parser.key(from: input)
+        XCTAssertEqual(result, "\"key\ntwo\"")
+    }
 }
