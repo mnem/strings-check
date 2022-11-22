@@ -1,6 +1,9 @@
 # strings-check
 
 [![Swift](https://github.com/mnem/strings-check/actions/workflows/swift.yml/badge.svg)](https://github.com/mnem/strings-check/actions/workflows/swift.yml)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmnem%2Fstrings-check%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/mnem/strings-check)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmnem%2Fstrings-check%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/mnem/strings-check)
+
 
 A simple command line utility to check if translation strings are missing, or if extra translations are present in a set of `.strings` files. A base file is passed which is treated as the canonical set of translations strings, and additional `.strings` files are passed to compare against this canonical version.
 
