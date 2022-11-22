@@ -24,3 +24,8 @@ let package = Package(
             dependencies: ["strings-check"]),
     ]
 )
+
+// Swift Package Index manfiest validation: 
+package.dependencies.append(
+    .package(url: "https://github.com/SwiftPackageIndex/SPIManifest.git", from: "0.12.0")
+)
