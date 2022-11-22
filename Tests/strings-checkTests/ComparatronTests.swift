@@ -1,10 +1,3 @@
-//
-//  ComparatronTests.swift
-//  
-//
-//  Created by David Wagner on 02/10/2022.
-//
-
 import XCTest
 @testable import strings_check
 
@@ -15,20 +8,20 @@ final class ComparatronTests: XCTestCase {
         let otherB = MockStringsFileSource(keys: Set(["a", "b", "c"]))
         let sut = Comparatron(base: base, others: [otherA, otherB])
         let results = sut.compare()
-        
+
         XCTAssertTrue(results.isExactStringsMatch)
     }
-    
+
     func testMissingStringsInOne() throws {
         let base = MockStringsFileSource(name: "source, ", keys: Set(["a", "b", "c"]))
         let otherA = MockStringsFileSource(keys: Set(["a", "b"]))
         let otherB = MockStringsFileSource(keys: Set(["a", "b", "c"]))
         let sut = Comparatron(base: base, others: [otherA, otherB])
         let results = sut.compare()
-        
+
         XCTAssertFalse(results.isExactStringsMatch)
         XCTAssertTrue( try XCTUnwrap(results[otherB.name]).isExactStringsMatch)
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.extraKeys.count, 0)
@@ -41,50 +34,50 @@ final class ComparatronTests: XCTestCase {
         let otherB = MockStringsFileSource(keys: Set(["a", "c"]))
         let sut = Comparatron(base: base, others: [otherA, otherB])
         let results = sut.compare()
-        
+
         XCTAssertFalse(results.isExactStringsMatch)
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.extraKeys.count, 0)
         XCTAssertEqual(resulA.missingKeys.sorted(), ["c"])
-        
+
         let resultB = try XCTUnwrap(results[otherB.name])
         XCTAssertFalse(resultB.isExactStringsMatch)
         XCTAssertEqual(resultB.extraKeys.count, 0)
         XCTAssertEqual(resultB.missingKeys.sorted(), ["b"])
     }
-    
+
     func testExtraStringsInOne() throws {
         let base = MockStringsFileSource(name: "source, ", keys: Set(["a", "b", "c"]))
         let otherA = MockStringsFileSource(keys: Set(["a", "b", "c", "d"]))
         let otherB = MockStringsFileSource(keys: Set(["a", "b", "c"]))
         let sut = Comparatron(base: base, others: [otherA, otherB])
         let results = sut.compare()
-        
+
         XCTAssertFalse(results.isExactStringsMatch)
         XCTAssertTrue( try XCTUnwrap(results[otherB.name]).isExactStringsMatch)
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.missingKeys.count, 0)
         XCTAssertEqual(resulA.extraKeys.sorted(), ["d"])
     }
-    
+
     func testExtraStringsInBoth() throws {
         let base = MockStringsFileSource(name: "source, ", keys: Set(["a", "b", "c"]))
         let otherA = MockStringsFileSource(keys: Set(["a", "b", "c", "d"]))
         let otherB = MockStringsFileSource(keys: Set(["a", "b", "c", "e"]))
         let sut = Comparatron(base: base, others: [otherA, otherB])
         let results = sut.compare()
-        
+
         XCTAssertFalse(results.isExactStringsMatch)
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.missingKeys.count, 0)
         XCTAssertEqual(resulA.extraKeys.sorted(), ["d"])
-        
+
         let resultB = try XCTUnwrap(results[otherB.name])
         XCTAssertFalse(resultB.isExactStringsMatch)
         XCTAssertEqual(resultB.missingKeys.count, 0)
@@ -100,28 +93,27 @@ final class ComparatronTests: XCTestCase {
 
         XCTAssertFalse(results.isExactStringsMatch)
         XCTAssertTrue( try XCTUnwrap(results[otherB.name]).isExactStringsMatch)
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.missingKeys.sorted(), ["b"])
         XCTAssertEqual(resulA.extraKeys.sorted(), ["d"])
     }
 
-    
     func testExtraAndMissingStringsInBoth() throws {
         let base = MockStringsFileSource(name: "source, ", keys: Set(["a", "b", "c"]))
         let otherA = MockStringsFileSource(keys: Set(["a", "c", "d"]))
         let otherB = MockStringsFileSource(keys: Set(["a", "b", "e"]))
         let sut = Comparatron(base: base, others: [otherA, otherB])
         let results = sut.compare()
-        
+
         XCTAssertFalse(results.isExactStringsMatch)
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.missingKeys.sorted(), ["b"])
         XCTAssertEqual(resulA.extraKeys.sorted(), ["d"])
-        
+
         let resultB = try XCTUnwrap(results[otherB.name])
         XCTAssertFalse(resultB.isExactStringsMatch)
         XCTAssertEqual(resultB.missingKeys.sorted(), ["c"])
@@ -133,7 +125,7 @@ final class ComparatronTests: XCTestCase {
         let otherA = MockStringsFileSource(keys: Set([]))
         let sut = Comparatron(base: base, others: [otherA])
         let results = sut.compare()
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.extraKeys.count, 0)
@@ -145,7 +137,7 @@ final class ComparatronTests: XCTestCase {
         let otherA = MockStringsFileSource(keys: Set(["a", "b", "c", "d", "e", "f"]))
         let sut = Comparatron(base: base, others: [otherA])
         let results = sut.compare()
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.extraKeys.sorted(), ["d", "e", "f"])
@@ -157,7 +149,7 @@ final class ComparatronTests: XCTestCase {
         let otherA = MockStringsFileSource(keys: Set(["d", "e", "f"]))
         let sut = Comparatron(base: base, others: [otherA])
         let results = sut.compare()
-        
+
         let resulA = try XCTUnwrap(results[otherA.name])
         XCTAssertFalse(resulA.isExactStringsMatch)
         XCTAssertEqual(resulA.extraKeys.sorted(), ["d", "e", "f"])

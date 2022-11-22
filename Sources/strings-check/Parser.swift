@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by David Wagner on 02/10/2022.
-//
-
 import Foundation
 
 struct Parser {
@@ -24,7 +17,7 @@ struct Parser {
         {
             return nil
         }
-        
+
         let lineRange = NSMakeRange(0, trimmedLine.count)
         let matches = lineMatcher.matches(in: trimmedLine, options: [], range: lineRange)
         guard let match = matches.first,
@@ -32,11 +25,14 @@ struct Parser {
         else {
             return nil
         }
-        
+
         return String(trimmedLine[keyRange])
     }
-    
+
     private static let lineMatcher: NSRegularExpression = {
-        try! NSRegularExpression(pattern: #"^\s*?(?<key>".*").*=.*?(?<value>".*").*?$"#, options: [.dotMatchesLineSeparators])
+        try! NSRegularExpression(
+            pattern: #"^\s*?(?<key>".*").*=.*?(?<value>".*").*?$"#,
+            options: [.dotMatchesLineSeparators]
+        )
     }()
 }
