@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by David Wagner on 02/10/2022.
-//
-
 import Foundation
 
 struct Comparatron {
@@ -12,15 +5,15 @@ struct Comparatron {
         let name: String
         let missingKeys: [String]
         let extraKeys: [String]
-        
+
         var isExactStringsMatch: Bool {
             missingKeys.isEmpty && extraKeys.isEmpty
         }
     }
-    
+
     let base: StringsFileSource
     let others: [StringsFileSource]
-    
+
     func compare() -> [StringsComparisonResult] {
         var results = [StringsComparisonResult]()
         for other in others {
@@ -44,7 +37,7 @@ extension Array where Element == Comparatron.StringsComparisonResult {
                 return false
             }
         }
-        
+
         return true
     }
 }

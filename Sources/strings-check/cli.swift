@@ -3,6 +3,14 @@ import Path
 
 @main
 struct StringsCheck: AsyncParsableCommand {
+    enum OutputMode: String, CaseIterable, ExpressibleByArgument {
+        case human, json
+
+        fileprivate static var help: String {
+            Self.allCases.map { $0.rawValue } .lazy.joined(separator: "|")
+        }
+    }
+
     static let configuration = CommandConfiguration(
         abstract: """
             Lists missing strings keys.
@@ -12,7 +20,7 @@ struct StringsCheck: AsyncParsableCommand {
             file but not in the other strings files.
             """
     )
-    
+
     @Flag(name: .shortAndLong)
     private(set) var verbose = false
     
@@ -21,6 +29,9 @@ struct StringsCheck: AsyncParsableCommand {
     
     @Argument(help: "The other .strings files to compare against the base.")
     private(set) var otherStringsFilename: [String]
+
+    @Option(name: .shortAndLong, help: "How to output the findings. [\(OutputMode.help)]")
+    private(set) var output: OutputMode = .human
 
     func validate() throws {
         guard baseStringsFilename.path.exists else {
@@ -33,58 +44,18 @@ struct StringsCheck: AsyncParsableCommand {
             }
         }
     }
-    
+
     mutating func run() async throws {
         let base = try await PathStringsFileSource(source: baseStringsFilename.path)
         var others = [StringsFileSource]()
         for other in otherStringsFilename {
             others.append(try await PathStringsFileSource(source: other.path))
         }
-        
+
         let comparatron = Comparatron(base: base, others: others)
         let results = comparatron.compare().sorted { $0.name < $1.name }
-        
-        print(OutputFormatter.results(base: base, results: results))
-    }
-    
-    enum OutputFormatter {
-        static func results(base: StringsFileSource, results: [Comparatron.StringsComparisonResult]) -> String {
-            var output = [String]()
-            output.append(header(base: base))
-            
-            for result in results {
-                output.append(header(result: result))
-                if result.isExactStringsMatch {
-                    output.append(identical())
-                } else {
-                    if result.missingKeys.isNotEmpty {
-                        output.append(different(keys: result.missingKeys, indent: "    - "))
-                    }
-                    if result.extraKeys.isNotEmpty {
-                        output.append(different(keys: result.extraKeys, indent: "    + "))
-                    }
-                }
-            }
-            
-            return output.joined(separator: "\n")
-        }
-        
-        static func header(base: StringsFileSource) -> String {
-            "Base file: \(base.name)"
-        }
-        
-        static func header(result: Comparatron.StringsComparisonResult) -> String {
-            "  \(result.name):"
-        }
-        
-        static func identical() -> String {
-            "    Identical"
-        }
-        
-        static func different(keys: [String], indent: String) -> String {
-            let keySeparator = "\n\(indent)"
-            return "\(indent)\(keys.sorted().joined(separator: keySeparator))"
-        }
+
+        print(try OutputFormatter(output, base: base, results: results).output)
     }
 }
 
@@ -94,8 +65,17 @@ extension String {
     }
 }
 
-extension Array {
-    fileprivate var isNotEmpty: Bool {
-        !self.isEmpty
+extension OutputFormatter {
+    fileprivate init(
+        _ outputMode: StringsCheck.OutputMode,
+        base: StringsFileSource,
+        results: [Comparatron.StringsComparisonResult]
+    ) {
+        switch outputMode {
+        case .human:
+            self = .human(base: base, results: results)
+        case .json:
+            self = .robot(base: base, results: results)
+        }
     }
 }
